@@ -4,10 +4,10 @@ import './app.sass'
 import Drawing from '../drawing/Drawing'
 import WordInput from '../wordInput/WordInput'
 
-export const guessedLettersContext = createContext<string[]>([])
+export const GuessedLettersContext = createContext<[string[], (x: string[]) => void] | null>(null!);
 
 export default function App() {
-  const word = 'the most important';
+  const word = 'THE MOST IMPORTANT';
   const [selectedWord, setSelectedWord] = useState(word);
   const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
 
@@ -18,14 +18,15 @@ export default function App() {
   }, [])
 
   return (
-    <div id='app-container'>
-      <span>{guessedLetters}</span>
-      <Drawing />
-      <WordInput
-        word={selectedWord}
-        guessedLetters={guessedLetters}
-      />
-    </div>
+    <GuessedLettersContext.Provider value={[guessedLetters, setGuessedLetters]}>
+      <div id='app-container'>
+        <Drawing />
+        <WordInput
+          word={selectedWord}
+          guessedLetters={guessedLetters}
+        />
+      </div>
+    </GuessedLettersContext.Provider>
   )
 }
 
