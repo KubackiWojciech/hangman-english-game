@@ -1,4 +1,74 @@
 #drawing-container
-    aspect-ratio: 1
-    height: 300px
-    border: 2px solid red
+    display: flex
+    flex-direction: column
+    row-gap: 18px
+
+    #drawing
+        aspect-ratio: 1
+        height: 300px
+        border: 2px solid red
+        position: relative
+
+        div
+            background: black
+            position: absolute
+
+        [data-order = '1']
+            height: 250px
+            width: 10px
+            bottom: 20px
+            left: 75px
+
+        [data-order = '2']
+            height: 10px
+            width: 150px
+            top: 30px
+            left: 75px
+
+        [data-order = '3']
+            width: 7px
+            height: 50px
+            right: 75px
+            top: 30px
+
+        [data-order = '4']
+            border-radius: 300px
+            width: 30px
+            aspect-ratio: 1
+            background: none
+            border: 7px solid black
+            right: 57px
+            top: 75px
+
+        [data-order = '5'] 
+            width: 7px
+            height: 75px
+            right: 75px
+            top: 115px
+            
+        @mixin right-limb()
+            height: 7px
+            width: 40px
+            right: 45px
+            rotate: 45deg
+
+        [data-order = '6']
+            @include right-limb()
+            top: 135px
+
+        [data-order = '8']
+            @include right-limb()
+            top: 195px
+        
+        @mixin left-limb()
+            @include right-limb()
+            right: 72px
+            rotate: -45deg
+
+        [data-order = '7']
+            @include left-limb()
+            top: 135px
+
+        [data-order = '9']
+            @include left-limb()
+            top: 195px

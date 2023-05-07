@@ -5,37 +5,57 @@ import Drawing from '../drawing/Drawing'
 import WordInput from '../wordInput/WordInput'
 
 export const GuessedLettersContext = createContext<[string[], (x: string[]) => void] | null>(null!);
+export const MissedLettersContext = createContext<[string[], (x: string[]) => void] | null>(null!);
 
 export default function App() {
   const word = 'THE MOST IMPORTANT';
   const [selectedWord, setSelectedWord] = useState(word);
   const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
+  const [missedLetters, setMissedLetters] = useState<string[]>([]);
+
 
   useEffect(() => {
-    document.body.addEventListener('keydown', e => {
-      keyInputHandler(guessedLetters, setGuessedLetters, e)
-    })
+    document.body.addEventListener('keydown', e => keyInputHandler(guessedLetters, setGuessedLetters, e, selectedWord, missedLetters, setMissedLetters))
   }, [])
 
   return (
     <GuessedLettersContext.Provider value={[guessedLetters, setGuessedLetters]}>
-      <div id='app-container'>
-        <Drawing />
-        <WordInput
-          word={selectedWord}
-          guessedLetters={guessedLetters}
-        />
-      </div>
+      <MissedLettersContext.Provider value={[missedLetters, setMissedLetters]}>
+        <div id='app-container'>
+          <Drawing />
+          <WordInput
+            word={selectedWord}
+          />
+        </div>
+      </MissedLettersContext.Provider>
     </GuessedLettersContext.Provider>
   )
 }
 
-function keyInputHandler(guessedLetters: string[], setGuessedLetters: (x: string[]) => void, e: KeyboardEvent) {
+function keyInputHandler(
+  guessedLetters: string[],
+  setGuessedLetters: (x: string[]) => void,
+  e: KeyboardEvent,
+  selectedWord: string,
+  missedLetters: string[],
+  setMissedLetters: (x: string[]) => void,
+) {
+
   let updatedGuessedLetters = guessedLetters;
-  if (!updatedGuessedLetters.includes(e.key)) {
-    updatedGuessedLetters.push(e.key);
+  let updatedMissedLetters = missedLetters;
+  let currentKey = e.key.toUpperCase()
+
+  if (currentKey.length !== 1) { return }
+  if (currentKey > 'Z' || currentKey < 'A') { return }
+  if (updatedGuessedLetters.includes(currentKey) ||
+    updatedMissedLetters.includes(currentKey)
+  ) { return }
+
+  if (selectedWord.toUpperCase().includes(currentKey)) {
+    updatedGuessedLetters.push(currentKey);
     setGuessedLetters(structuredClone(updatedGuessedLetters));
   } else {
-    console.log('You already have typed this letter')
+    updatedMissedLetters.push(currentKey);
+    setMissedLetters(structuredClone(updatedMissedLetters));
   }
 }

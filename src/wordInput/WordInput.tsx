@@ -4,8 +4,7 @@ import './wordInput.sass'
 import { GuessedLettersContext } from '../app/App'
 
 interface params {
-    word: string,
-    guessedLetters: string[]
+    word: string
 }
 
 export default function WordInput(param: params) {
