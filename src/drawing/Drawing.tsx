@@ -1,12 +1,13 @@
 import React, { useContext, useEffect } from 'react'
 
 import './drawing.sass'
-import { GuessedLettersContext, MissedLettersContext, RequiredLettersContext } from '../app/App'
+import { GuessedLettersContext, MissedLettersContext, PolishTranslationContext, RequiredLettersContext } from '../app/App'
 
 export default function Drawing() {
   const [guessedLetters, setGuessedLetters] = useContext(GuessedLettersContext);
   const [missedLetters, setMissedLetters] = useContext(MissedLettersContext);
   const [requiredLetters, setRequiredLetters] = useContext(RequiredLettersContext);
+  const polishTranslation = useContext(PolishTranslationContext);
 
   return (
     <div id='drawing-container'>
@@ -25,10 +26,11 @@ export default function Drawing() {
         <span>Guessed Letters:</span>
         <span>{guessedLetters}</span>
       </div>
-      <div id="required-letters">
-        <span>Required Letters:</span>
-        <span>{requiredLetters}</span>
+      <div id="polish-translation">
+        <span>Polish translation: </span>
+        <span>{polishTranslation}</span>
       </div>
+
       <div id="missed-letters">
         <span>Missed Letters:</span>
         <span>{missedLetters}</span>

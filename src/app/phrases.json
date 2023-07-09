@@ -1,7 +1,16 @@
-[
-    ["najważniejszy", "the most important"],
+[ ["najważniejszy", "the most important"],
     ["test", "test"],
     ["pierwszy", "first"],
     ["dupa", "ass"],
-    ["cztery", "four"]
-]
+    [" Bardzo dziękuję", "  Thanks so much"],
+    ["Naprawdę doceniam", "I really appreciate"],
+    ["Przepraszam (Używane, aby zwrócić na siebie czyjąś uwagę.)", "Excuse me"],
+    ["Co sądzisz?", "What do you think?"],
+    ["Jak to brzmi?", "How does that sound?"],
+    ["To brzmi świetnie.", "That sounds great"],
+    ["Czy możesz mówić wolniej?", "Could you please speak more slowly?"],
+    ["Przepraszam, że Ci przeszkadzam.", "Sorry to bother you."],
+    ["Ile to kosztuje?", "How much is that?"],
+    ["Czy mogę prosić o...?", "Can I have...?"],
+    ["WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW", "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW"],
+    ["cztery", "four"] ]

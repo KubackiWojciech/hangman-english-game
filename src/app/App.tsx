@@ -1,5 +1,5 @@
 import React, { StrictMode, createContext, useEffect, useState } from 'react'
-import _, { delay } from 'lodash';
+import _, { create, delay } from 'lodash';
 
 import './app.sass'
 import Drawing from '../drawing/Drawing'
@@ -10,6 +10,9 @@ import phrases from './phrases.json';
 export const GuessedLettersContext = createContext<[string[], (x: string[]) => void]>(null!);
 export const MissedLettersContext = createContext<[string[], (x: string[]) => void]>(null!);
 export const RequiredLettersContext = createContext<[string[], (x: string[]) => void]>(null!);
+export const PolishTranslationContext = createContext<string>(null!);
+
+export const specialChars = [' ', '.', ',', '?'];
 
 enum gameStatus {
   won = 'won',
@@ -22,7 +25,8 @@ export default function App() {
   const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
   const [missedLetters, setMissedLetters] = useState<string[]>([]);
   const [requiredLetters, setRequiredLetters] = useState<string[]>(generateRequiredLetters(selectedWord));
-  const [currentGameStatus, setCurrentGameStatus] = useState(gameStatus.lasts)
+  const [currentGameStatus, setCurrentGameStatus] = useState(gameStatus.lasts);
+  const [polishTranslation, setPolishTranslation] = useState('najważniejszy');
 
   useEffect(() => {
     document.body.addEventListener('keydown', keyInputHandler);
@@ -33,14 +37,14 @@ export default function App() {
 
   function keyInputHandler(e: KeyboardEvent) {
     let currentKey = e.key.toUpperCase();
-  
+
     if (currentGameStatus !== gameStatus.lasts) { return }
     if (currentKey.length !== 1) { return }
     if (currentKey > 'Z' || currentKey < 'A') { return }
     if (guessedLetters.includes(currentKey) ||
       missedLetters.includes(currentKey)
     ) { return }
-  
+
     if (requiredLetters.includes(currentKey)) {
       let updatedGuessedLetters = guessedLetters;
       updatedGuessedLetters.push(currentKey);
@@ -58,24 +62,26 @@ export default function App() {
       }
     }
   }
-  
+
   function lostGame() {
     setCurrentGameStatus(gameStatus.lost);
     setTimeout(() => {
       startNewGame();
     }, 700);
   };
-  
+
   function wonGame() {
     setCurrentGameStatus(gameStatus.won);
     setTimeout(() => {
       startNewGame();
     }, 700);
   };
-  
+
   function startNewGame() {
-    let newWord = phrases[Math.floor(phrases.length * Math.random())];
+    // let newWord = phrases[Math.floor(phrases.length * Math.random())];
+    let newWord = phrases[13];
     setSelectedWord(newWord[1]);
+    setPolishTranslation(newWord[0]);
     setRequiredLetters(generateRequiredLetters(newWord[1]));
     setCurrentGameStatus(gameStatus.lasts);
     setGuessedLetters(structuredClone([]));
@@ -86,23 +92,22 @@ export default function App() {
     <GuessedLettersContext.Provider value={[guessedLetters, setGuessedLetters]}>
       <MissedLettersContext.Provider value={[missedLetters, setMissedLetters]}>
         <RequiredLettersContext.Provider value={[requiredLetters, setRequiredLetters]}>
-          <div id='app-container'>
-            {
-              currentGameStatus === gameStatus.lasts ?
-                <>
-                  <Drawing />
-                  <button
-                    onClick={() => setGuessedLetters([])}
-                  >CLEAR GUESSED LETTERS</button>
-                  <WordInput
-                    word={selectedWord}
-                  />
-                </>
-                : currentGameStatus === gameStatus.lost ?
-                  <span>you lost</span>
-                  : <span>you won</span>
-            }
-          </div>
+          <PolishTranslationContext.Provider value={polishTranslation}>
+            <div id='app-container'>
+              {
+                currentGameStatus === gameStatus.lasts ?
+                  <>
+                    <Drawing />
+                    <WordInput
+                      word={selectedWord}
+                    />
+                  </>
+                  : currentGameStatus === gameStatus.lost ?
+                    <span>you lost</span>
+                    : <span>you won</span>
+              }
+            </div>
+          </PolishTranslationContext.Provider>
         </RequiredLettersContext.Provider>
       </MissedLettersContext.Provider>
     </GuessedLettersContext.Provider>
@@ -111,9 +116,10 @@ export default function App() {
 
 function generateRequiredLetters(word: string) {
   return word
-  .toUpperCase()
-  .split('')
-  .filter(x => x !== ' ')
-  .filter((x, pos, self) => self.indexOf(x) === pos)
-  .sort();
+    .toUpperCase()
+    .split('')
+    .filter(x => x !== ' ')
+    .filter(x => !specialChars.includes(x))
+    .filter((x, pos, self) => self.indexOf(x) === pos)
+    .sort();
 }
