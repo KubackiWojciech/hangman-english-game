@@ -5,6 +5,8 @@ import './app.sass'
 import Drawing from '../drawing/Drawing'
 import WordInput from '../wordInput/WordInput'
 
+import phrases from './phrases.json';
+
 export const GuessedLettersContext = createContext<[string[], (x: string[]) => void]>(null!);
 export const MissedLettersContext = createContext<[string[], (x: string[]) => void]>(null!);
 export const RequiredLettersContext = createContext<[string[], (x: string[]) => void]>(null!);
@@ -16,17 +18,10 @@ enum gameStatus {
 }
 
 export default function App() {
-  const word = 'THE MOST IMPORTANT';
-  const [selectedWord, setSelectedWord] = useState(word);
+  const [selectedWord, setSelectedWord] = useState('the most important');
   const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
   const [missedLetters, setMissedLetters] = useState<string[]>([]);
-  const [requiredLetters, setRequiredLetters] = useState<string[]>(selectedWord
-    .toUpperCase()
-    .split('')
-    .filter(x => x !== ' ')
-    .filter((x, pos, self) => self.indexOf(x) === pos)
-    .sort()
-  );
+  const [requiredLetters, setRequiredLetters] = useState<string[]>(generateRequiredLetters(selectedWord));
   const [currentGameStatus, setCurrentGameStatus] = useState(gameStatus.lasts)
 
   useEffect(() => {
@@ -79,6 +74,9 @@ export default function App() {
   };
   
   function startNewGame() {
+    let newWord = phrases[Math.floor(phrases.length * Math.random())];
+    setSelectedWord(newWord[1]);
+    setRequiredLetters(generateRequiredLetters(newWord[1]));
     setCurrentGameStatus(gameStatus.lasts);
     setGuessedLetters(structuredClone([]));
     setMissedLetters(structuredClone([]));
@@ -109,4 +107,13 @@ export default function App() {
       </MissedLettersContext.Provider>
     </GuessedLettersContext.Provider>
   )
+}
+
+function generateRequiredLetters(word: string) {
+  return word
+  .toUpperCase()
+  .split('')
+  .filter(x => x !== ' ')
+  .filter((x, pos, self) => self.indexOf(x) === pos)
+  .sort();
 }
