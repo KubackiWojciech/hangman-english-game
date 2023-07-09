@@ -34,7 +34,7 @@ export default function App() {
     return () => {
       document.body.removeEventListener('keydown', keyInputHandler);
     }
-  }, [keyInputHandler]);
+  }, [currentGameStatus]);
 
   function keyInputHandler(e: KeyboardEvent) {
     let currentKey = e.key.toUpperCase();
