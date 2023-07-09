@@ -21,12 +21,13 @@ enum gameStatus {
 }
 
 export default function App() {
-  const [selectedWord, setSelectedWord] = useState('the most important');
+  const firstPhrase = phrases[Math.floor(phrases.length * Math.random())];
+  const [selectedWord, setSelectedWord] = useState(firstPhrase[1]);
   const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
   const [missedLetters, setMissedLetters] = useState<string[]>([]);
-  const [requiredLetters, setRequiredLetters] = useState<string[]>(generateRequiredLetters(selectedWord));
+  const [requiredLetters, setRequiredLetters] = useState<string[]>(generateRequiredLetters(firstPhrase[1]));
   const [currentGameStatus, setCurrentGameStatus] = useState(gameStatus.lasts);
-  const [polishTranslation, setPolishTranslation] = useState('najważniejszy');
+  const [polishTranslation, setPolishTranslation] = useState(firstPhrase[0]);
 
   useEffect(() => {
     document.body.addEventListener('keydown', keyInputHandler);
@@ -78,11 +79,11 @@ export default function App() {
   };
 
   function startNewGame() {
-    // let newWord = phrases[Math.floor(phrases.length * Math.random())];
-    let newWord = phrases[13];
+    let newWord = phrases[Math.floor(phrases.length * Math.random())];
+    // let newWord = phrases[10]; //to test specific phrase
     setSelectedWord(newWord[1]);
     setPolishTranslation(newWord[0]);
-    setRequiredLetters(generateRequiredLetters(newWord[1]));
+    setRequiredLetters(structuredClone(generateRequiredLetters(newWord[1])));
     setCurrentGameStatus(gameStatus.lasts);
     setGuessedLetters(structuredClone([]));
     setMissedLetters(structuredClone([]));
@@ -118,7 +119,6 @@ function generateRequiredLetters(word: string) {
   return word
     .toUpperCase()
     .split('')
-    .filter(x => x !== ' ')
     .filter(x => !specialChars.includes(x))
     .filter((x, pos, self) => self.indexOf(x) === pos)
     .sort();

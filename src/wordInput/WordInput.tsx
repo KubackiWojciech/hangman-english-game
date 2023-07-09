@@ -15,14 +15,20 @@ export default function WordInput(param: params) {
     return (
         <div id='word-input-container'>
             {
-                param.word.toUpperCase().split('').map((letter, index) => (
-                    <div className={!specialChars.includes(letter) ? "letter container" : "space container"} key={index}>{
-                        guessedLetters.map(x => 
-                            x.toUpperCase())
-                            .includes(letter.toUpperCase()) ||
-                            specialChars.includes(letter) ? letter : null
-                    }</div>
-                ))
+                param.word.split(' ').map(oneWord =>
+                    <div className='one-word-container'>
+                        {
+                            oneWord.toUpperCase().split('').map((letter, index) => (
+                                <div className={!specialChars.includes(letter) ? "letter container" : "space container"} key={index}>{
+                                    guessedLetters.map(x =>
+                                        x.toUpperCase())
+                                        .includes(letter.toUpperCase()) ||
+                                        specialChars.includes(letter) ? letter : null
+                                }</div>
+                            ))
+                        }
+                    </div>
+                )
             }
         </div>
     )

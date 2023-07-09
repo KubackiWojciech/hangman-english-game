@@ -30,6 +30,10 @@ export default function Drawing() {
         <span>Polish translation: </span>
         <span>{polishTranslation}</span>
       </div>
+      <div id="require-letters">
+        <span>require-letters: </span>
+        <span>{requiredLetters}</span>
+      </div>
 
       <div id="missed-letters">
         <span>Missed Letters:</span>
