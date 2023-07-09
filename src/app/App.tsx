@@ -1,4 +1,5 @@
-import React, { createContext, useEffect, useState } from 'react'
+import React, { StrictMode, createContext, useEffect, useState } from 'react'
+import _, { delay } from 'lodash';
 
 import './app.sass'
 import Drawing from '../drawing/Drawing'
@@ -23,32 +24,38 @@ export default function App() {
     .toUpperCase()
     .split('')
     .filter(x => x !== ' ')
-    .filter((x, pos, self) => self.indexOf(x) === pos));
-  
+    .filter((x, pos, self) => self.indexOf(x) === pos)
+    .sort()
+  );
   const [currentGameStatus, setCurrentGameStatus] = useState(gameStatus.lasts)
 
   useEffect(() => {
-    document.body.addEventListener('keydown', e => keyInputHandler(e));
-  }, [])
+    document.body.addEventListener('keydown', keyInputHandler);
+    return () => {
+      document.body.removeEventListener('keydown', keyInputHandler);
+    }
+  }, [keyInputHandler]);
 
   function keyInputHandler(e: KeyboardEvent) {
-    let updatedGuessedLetters = guessedLetters;
-    let updatedMissedLetters = missedLetters;
-    let currentKey = e.key.toUpperCase()
-
+    let currentKey = e.key.toUpperCase();
+  
+    if (currentGameStatus !== gameStatus.lasts) { return }
     if (currentKey.length !== 1) { return }
     if (currentKey > 'Z' || currentKey < 'A') { return }
-    if (updatedGuessedLetters.includes(currentKey) ||
-      updatedMissedLetters.includes(currentKey)
+    if (guessedLetters.includes(currentKey) ||
+      missedLetters.includes(currentKey)
     ) { return }
-
+  
     if (requiredLetters.includes(currentKey)) {
+      let updatedGuessedLetters = guessedLetters;
       updatedGuessedLetters.push(currentKey);
+      updatedGuessedLetters.sort();
       setGuessedLetters(structuredClone(updatedGuessedLetters));
-      if (requiredLetters.sort() === updatedGuessedLetters) {
+      if (_.isEqual(requiredLetters, updatedGuessedLetters)) {
         wonGame();
       }
     } else {
+      let updatedMissedLetters = missedLetters;
       updatedMissedLetters.push(currentKey);
       setMissedLetters(structuredClone(updatedMissedLetters));
       if (missedLetters.length >= 9) {
@@ -56,26 +63,26 @@ export default function App() {
       }
     }
   }
-
+  
   function lostGame() {
     setCurrentGameStatus(gameStatus.lost);
     setTimeout(() => {
       startNewGame();
     }, 700);
-  }
-
+  };
+  
   function wonGame() {
     setCurrentGameStatus(gameStatus.won);
     setTimeout(() => {
       startNewGame();
     }, 700);
-  }
-
+  };
+  
   function startNewGame() {
     setCurrentGameStatus(gameStatus.lasts);
-    setGuessedLetters([]);
-    setMissedLetters([]);
-  }
+    setGuessedLetters(structuredClone([]));
+    setMissedLetters(structuredClone([]));
+  };
 
   return (
     <GuessedLettersContext.Provider value={[guessedLetters, setGuessedLetters]}>
@@ -86,14 +93,17 @@ export default function App() {
               currentGameStatus === gameStatus.lasts ?
                 <>
                   <Drawing />
+                  <button
+                    onClick={() => setGuessedLetters([])}
+                  >CLEAR GUESSED LETTERS</button>
                   <WordInput
                     word={selectedWord}
                   />
                 </>
                 : currentGameStatus === gameStatus.lost ?
-                <span>you lost</span>
-                : <span>you won</span>
-          }
+                  <span>you lost</span>
+                  : <span>you won</span>
+            }
           </div>
         </RequiredLettersContext.Provider>
       </MissedLettersContext.Provider>
