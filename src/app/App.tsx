@@ -6,15 +6,16 @@ import Drawing from '../drawing/Drawing'
 import WordInput from '../wordInput/WordInput'
 
 import phrases from './phrases.json';
+import GameOver from '../gameOver/GameOver';
 
 export const GuessedLettersContext = createContext<[string[], (x: string[]) => void]>(null!);
 export const MissedLettersContext = createContext<[string[], (x: string[]) => void]>(null!);
 export const RequiredLettersContext = createContext<[string[], (x: string[]) => void]>(null!);
 export const PolishTranslationContext = createContext<string>(null!);
 
-export const specialChars = [' ', '.', ',', '?'];
+export const specialChars = [' ', '.', '…', ',', '?'];
 
-enum gameStatus {
+export enum gameStatus {
   won = 'won',
   lost = 'lost',
   lasts = 'lasts'
@@ -68,14 +69,14 @@ export default function App() {
     setCurrentGameStatus(gameStatus.lost);
     setTimeout(() => {
       startNewGame();
-    }, 700);
+    }, 500);
   };
 
   function wonGame() {
     setCurrentGameStatus(gameStatus.won);
     setTimeout(() => {
       startNewGame();
-    }, 700);
+    }, 500);
   };
 
   function startNewGame() {
@@ -85,6 +86,7 @@ export default function App() {
     setPolishTranslation(newWord[0]);
     setRequiredLetters(structuredClone(generateRequiredLetters(newWord[1])));
     setCurrentGameStatus(gameStatus.lasts);
+    // setCurrentGameStatus(gameStatus.won);
     setGuessedLetters(structuredClone([]));
     setMissedLetters(structuredClone([]));
   };
@@ -96,16 +98,13 @@ export default function App() {
           <PolishTranslationContext.Provider value={polishTranslation}>
             <div id='app-container'>
               {
-                currentGameStatus === gameStatus.lasts ?
-                  <>
-                    <Drawing />
-                    <WordInput
-                      word={selectedWord}
-                    />
-                  </>
-                  : currentGameStatus === gameStatus.lost ?
-                    <span>you lost</span>
-                    : <span>you won</span>
+                <>
+                  <Drawing />
+                  <WordInput
+                    word={selectedWord}
+                  />
+                  <GameOver gameStatus={currentGameStatus} />
+                </>
               }
             </div>
           </PolishTranslationContext.Provider>
