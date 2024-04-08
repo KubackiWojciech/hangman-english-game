@@ -69,7 +69,7 @@ export default function App() {
         wonGame();
       }
     } else {
-      setTypos(typos + 1);
+      setTypos(t => t + 1);
       let updatedMissedLetters = missedLetters;
       updatedMissedLetters.push(currentKey);
       setMissedLetters(structuredClone(updatedMissedLetters));
@@ -85,7 +85,7 @@ export default function App() {
     setGuessedLetters(requiredLetters);
     setTimeout(() => {
       startNewGame();
-    }, 750);
+    }, 1500);
   };
 
   function wonGame() {

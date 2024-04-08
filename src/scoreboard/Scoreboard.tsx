@@ -9,8 +9,8 @@ export default function Scoreboard() {
 
     return (
         <div id="score-board">
-            <h1>{'Score: ' + globalScore}</h1>
-            <h1>{'typos: ' + typos}</h1>
+            <h1>Score: {globalScore}</h1>
+            <h1>Typos: {typos}</h1>
         </div>
     )
 }
