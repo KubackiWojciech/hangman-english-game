@@ -7,13 +7,16 @@ import WordInput from '../wordInput/WordInput'
 
 import phrases from './phrases.json';
 import GameOver from '../gameOver/GameOver';
+import Scoreboard from '../scoreboard/Scoreboard';
 
 export const GuessedLettersContext = createContext<[string[], (x: string[]) => void]>(null!);
 export const MissedLettersContext = createContext<[string[], (x: string[]) => void]>(null!);
 export const RequiredLettersContext = createContext<[string[], (x: string[]) => void]>(null!);
 export const PolishTranslationContext = createContext<string>(null!);
+export const GlobalScoreContext = createContext<[number, (x: number) => void]>(null!);
+export const TyposContext = createContext<[number, (x: number) => void]>(null!);
 
-export const specialChars = [' ', '.', '…', ',', '?'];
+export const specialChars = [' ', '.', '…', ',', '?', '!', "'"];
 
 export enum gameStatus {
   won = 'won',
@@ -29,6 +32,8 @@ export default function App() {
   const [requiredLetters, setRequiredLetters] = useState<string[]>(generateRequiredLetters(firstPhrase[1]));
   const [currentGameStatus, setCurrentGameStatus] = useState(gameStatus.lasts);
   const [polishTranslation, setPolishTranslation] = useState(firstPhrase[0]);
+  const [globalScore, setGlobalScore] = useState<number>(Number(localStorage.getItem('score')));
+  const [typos, setTypos] = useState<number>(Number(localStorage.getItem('typos')));
 
   useEffect(() => {
     document.body.addEventListener('keydown', keyInputHandler);
@@ -36,6 +41,14 @@ export default function App() {
       document.body.removeEventListener('keydown', keyInputHandler);
     }
   }, [currentGameStatus]);
+
+  useEffect(() => {
+    localStorage.setItem('score', globalScore.toString());
+  }, [globalScore]);
+
+  useEffect(() => {
+    localStorage.setItem('typos', typos.toString());
+  }, [typos]);
 
   function keyInputHandler(e: KeyboardEvent) {
     let currentKey = e.key.toUpperCase();
@@ -56,6 +69,7 @@ export default function App() {
         wonGame();
       }
     } else {
+      setTypos(typos + 1);
       let updatedMissedLetters = missedLetters;
       updatedMissedLetters.push(currentKey);
       setMissedLetters(structuredClone(updatedMissedLetters));
@@ -66,13 +80,16 @@ export default function App() {
   }
 
   function lostGame() {
+    setGlobalScore(globalScore - 1);
     setCurrentGameStatus(gameStatus.lost);
+    setGuessedLetters(requiredLetters);
     setTimeout(() => {
       startNewGame();
-    }, 500);
+    }, 750);
   };
 
   function wonGame() {
+    setGlobalScore(globalScore + 1);
     setCurrentGameStatus(gameStatus.won);
     setTimeout(() => {
       startNewGame();
@@ -96,17 +113,18 @@ export default function App() {
       <MissedLettersContext.Provider value={[missedLetters, setMissedLetters]}>
         <RequiredLettersContext.Provider value={[requiredLetters, setRequiredLetters]}>
           <PolishTranslationContext.Provider value={polishTranslation}>
-            <div id='app-container'>
-              {
-                <>
+            <GlobalScoreContext.Provider value={[globalScore, setGlobalScore]}>
+              <TyposContext.Provider value={[typos, setTypos]}>
+                <div id='app-container'>
+                  <Scoreboard />
                   <Drawing />
                   <WordInput
                     word={selectedWord}
                   />
                   <GameOver gameStatus={currentGameStatus} />
-                </>
-              }
-            </div>
+                </div>
+              </TyposContext.Provider>
+            </GlobalScoreContext.Provider>
           </PolishTranslationContext.Provider>
         </RequiredLettersContext.Provider>
       </MissedLettersContext.Provider>

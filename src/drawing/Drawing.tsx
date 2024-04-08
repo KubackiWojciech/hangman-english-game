@@ -22,19 +22,14 @@ export default function Drawing() {
         { missedLetters.length >= 8 ? <div data-order={8}></div> : null}
         { missedLetters.length >= 9 ? <div data-order={9}></div> : null}
       </div>
-      <div id="guessed-letters">
-        <span>Guessed Letters:</span>
-        <span>{guessedLetters}</span>
-      </div>
       <div id="polish-translation">
         <span>Polish translation: </span>
         <span>{polishTranslation}</span>
       </div>
-      <div id="require-letters">
-        <span>require-letters: </span>
-        <span>{requiredLetters}</span>
+      <div id="guessed-letters">
+        <span>Guessed Letters:</span>
+        <span>{guessedLetters}</span>
       </div>
-
       <div id="missed-letters">
         <span>Missed Letters:</span>
         <span>{missedLetters}</span>

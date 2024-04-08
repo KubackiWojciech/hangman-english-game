@@ -10,7 +10,6 @@ interface params {
 
 export default function WordInput(param: params) {
     const [guessedLetters, setGuessedLetters] = useContext(GuessedLettersContext);
-    console.log(param.word.toUpperCase().split(''))
 
     return (
         <div id='word-input-container'>
