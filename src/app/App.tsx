@@ -16,7 +16,7 @@ export const PolishTranslationContext = createContext<string>(null!);
 export const GlobalScoreContext = createContext<[number, (x: number) => void]>(null!);
 export const TyposContext = createContext<[number, (x: number) => void]>(null!);
 
-export const specialChars = [' ', '.', '…', ',', '?', '!', "'", "’"];
+export const specialChars = [' ', '.', '…', ',', '?', '!', "'", "’", "-"];
 
 export enum gameStatus {
   won = 'won',
